@@ -1,0 +1,33 @@
+<div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
+  <h1 class="text-lg font-semibold">New Task</h1>
+
+  <input pInputText placeholder="Title" [ngModel]="title()" (ngModelChange)="title.set($event)" />
+
+  <textarea
+    pTextarea
+    rows="3"
+    placeholder="Notes (optional)"
+    [ngModel]="notes()"
+    (ngModelChange)="notes.set($event)"
+  ></textarea>
+
+  <p-datepicker
+    placeholder="Due date"
+    [showIcon]="true"
+    [ngModel]="dueDate()"
+    (ngModelChange)="dueDate.set($event)"
+  />
+
+  <p-select
+    [options]="priorityOptions"
+    optionLabel="label"
+    optionValue="value"
+    [ngModel]="priority()"
+    (ngModelChange)="priority.set($event)"
+  />
+
+  <div class="flex gap-2">
+    <p-button label="Save" styleClass="flex-1" [disabled]="!title().trim()" (onClick)="save()" />
+    <p-button label="Cancel" severity="secondary" [outlined]="true" styleClass="flex-1" (onClick)="cancel()" />
+  </div>
+</div>

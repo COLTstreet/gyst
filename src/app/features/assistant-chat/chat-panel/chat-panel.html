@@ -1,0 +1,50 @@
+@if (open()) {
+  <div class="fixed inset-x-4 bottom-20 z-20 flex max-h-[70vh] flex-col rounded-xl bg-white shadow-xl sm:inset-x-auto sm:right-4 sm:w-96">
+    <header class="flex items-center justify-between border-b border-gray-100 p-3">
+      <span class="text-sm font-medium">Assistant</span>
+      <button type="button" class="pi pi-times text-gray-400" aria-label="Close chat" (click)="toggle()"></button>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-3">
+      @for (message of assistantService.messages(); track message.id) {
+        <app-chat-message [message]="message" />
+      } @empty {
+        <p class="py-8 text-center text-sm text-gray-400">Ask me to add a task, jot a note, anything.</p>
+      }
+
+      @if (assistantService.conversation()?.pendingConfirmation; as confirmation) {
+        <app-confirmation-prompt [confirmation]="confirmation" />
+      }
+    </div>
+
+    <form
+      class="flex gap-2 border-t border-gray-100 p-3"
+      (submit)="$event.preventDefault(); send()"
+    >
+      <input
+        pInputText
+        class="flex-1"
+        placeholder="Message the assistant…"
+        [disabled]="!!assistantService.conversation()?.pendingConfirmation"
+        [ngModel]="draft()"
+        (ngModelChange)="draft.set($event)"
+        name="chatDraft"
+      />
+      <p-button
+        type="submit"
+        icon="pi pi-send"
+        [loading]="assistantService.sending()"
+        [disabled]="!draft().trim() || !!assistantService.conversation()?.pendingConfirmation"
+      />
+    </form>
+  </div>
+}
+
+<button
+  type="button"
+  class="fixed bottom-20 right-4 z-20 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg"
+  aria-label="Toggle assistant chat"
+  (click)="toggle()"
+>
+  <i class="pi" [class.pi-comment]="!open()" [class.pi-times]="open()"></i>
+</button>

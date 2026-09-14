@@ -1,0 +1,51 @@
+<div class="mx-auto flex max-w-lg flex-col gap-6 p-4">
+  <header class="flex items-center justify-between">
+    <button type="button" class="pi pi-chevron-left text-gray-400" aria-label="Previous day" (click)="goToPreviousDay()"></button>
+    <h1 class="text-lg font-semibold">
+      {{ isToday() ? 'Today' : (viewedDate() | date: 'EEEE, MMM d') }}
+    </h1>
+    <button type="button" class="pi pi-chevron-right text-gray-400" aria-label="Next day" (click)="goToNextDay()"></button>
+  </header>
+
+  <form class="flex gap-2" (submit)="$event.preventDefault(); addEntry()">
+    <input
+      pInputText
+      class="flex-1"
+      placeholder="Jot something down…"
+      [ngModel]="draft()"
+      (ngModelChange)="draft.set($event)"
+      name="draft"
+    />
+    <p-button type="submit" icon="pi pi-arrow-up" [disabled]="!draft().trim()" />
+  </form>
+
+  <section class="flex flex-col gap-2">
+    @for (entry of entries(); track entry.id) {
+      <div class="rounded-lg bg-white p-3 text-sm shadow-sm">
+        <p>{{ entry.text }}</p>
+        <p class="mt-1 text-xs text-gray-400">{{ entry.timestamp.toDate() | date: 'shortTime' }}</p>
+      </div>
+    } @empty {
+      <p class="py-8 text-center text-sm text-gray-400">No notes yet for this day.</p>
+    }
+  </section>
+
+  <section class="grid grid-cols-2 gap-3">
+    <button
+      type="button"
+      class="rounded-lg bg-white p-4 text-left shadow-sm"
+      (click)="openTasksDueToday()"
+    >
+      <p class="text-2xl font-semibold">{{ tasksDueTodayCount() }}</p>
+      <p class="text-xs text-gray-500">Tasks due today</p>
+    </button>
+    <button
+      type="button"
+      class="rounded-lg bg-white p-4 text-left shadow-sm"
+      (click)="openReminders()"
+    >
+      <p class="text-2xl font-semibold">{{ pendingRemindersCount() }}</p>
+      <p class="text-xs text-gray-500">Pending reminders</p>
+    </button>
+  </section>
+</div>

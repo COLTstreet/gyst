@@ -1,0 +1,9 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Tailwind v4, preflight omitted deliberately — PrimeNG provides its own base
+   styles and the two reset layers conflict. Import order matters: PrimeNG's
+   theme CSS loads before Tailwind's utilities (see app.config.ts / angular.json). */
+@layer theme, base, primeng, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@import 'primeicons/primeicons.css';

@@ -1,0 +1,42 @@
+<div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
+  <header class="flex items-center justify-between">
+    <h1 class="text-lg font-semibold">Tasks</h1>
+    <p-button icon="pi pi-plus" [rounded]="true" (onClick)="openNewTask()" />
+  </header>
+
+  <div class="flex gap-2">
+    @for (chip of [['all', 'All'], ['today', 'Today'], ['overdue', 'Overdue']]; track chip[0]) {
+      <button
+        type="button"
+        class="rounded-full px-3 py-1 text-sm"
+        [class.bg-blue-600]="filter() === chip[0]"
+        [class.text-white]="filter() === chip[0]"
+        [class.bg-gray-100]="filter() !== chip[0]"
+        [class.text-gray-600]="filter() !== chip[0]"
+        (click)="setFilter($any(chip[0]))"
+      >
+        {{ chip[1] }}
+      </button>
+    }
+  </div>
+
+  <ul class="flex flex-col gap-2">
+    @for (task of filteredTasks(); track task.id) {
+      <li class="flex items-center gap-3 rounded-lg bg-white p-3 shadow-sm">
+        <p-checkbox
+          [binary]="true"
+          [ngModel]="task.status === 'completed'"
+          (ngModelChange)="toggleComplete(task)"
+        />
+        <a [routerLink]="['/tasks', task.id]" class="flex-1 text-sm" [class.line-through]="task.status === 'completed'" [class.text-gray-400]="task.status === 'completed'">
+          {{ task.title }}
+          @if (task.dueDate) {
+            <span class="ml-2 text-xs text-gray-400">{{ task.dueDate.toDate() | date: 'MMM d' }}</span>
+          }
+        </a>
+      </li>
+    } @empty {
+      <p class="py-8 text-center text-sm text-gray-400">No tasks here.</p>
+    }
+  </ul>
+</div>

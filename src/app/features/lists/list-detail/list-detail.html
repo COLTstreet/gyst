@@ -1,0 +1,37 @@
+@if (list(); as list) {
+  <div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
+    <h1 class="text-lg font-semibold">{{ list.name }}</h1>
+
+    <form class="flex gap-2" (submit)="$event.preventDefault(); addItem()">
+      <input
+        pInputText
+        class="flex-1"
+        placeholder="Add item…"
+        [ngModel]="newItemText()"
+        (ngModelChange)="newItemText.set($event)"
+        name="newItem"
+      />
+      <p-button type="submit" icon="pi pi-plus" [disabled]="!newItemText().trim()" />
+    </form>
+
+    <ul class="flex flex-col gap-2">
+      @for (item of list.items; track item.id) {
+        <li class="flex items-center gap-3 rounded-lg bg-white p-3 shadow-sm">
+          <p-checkbox
+            [binary]="true"
+            [ngModel]="item.checked"
+            (ngModelChange)="toggleChecked(item.id, $event)"
+          />
+          <span class="flex-1 text-sm" [class.line-through]="item.checked" [class.text-gray-400]="item.checked">
+            {{ item.text }}
+          </span>
+          <button type="button" class="pi pi-trash text-gray-300" aria-label="Remove item" (click)="removeItem(item.id)"></button>
+        </li>
+      } @empty {
+        <p class="py-8 text-center text-sm text-gray-400">This list is empty.</p>
+      }
+    </ul>
+  </div>
+} @else {
+  <p class="p-4 text-center text-sm text-gray-400">List not found.</p>
+}

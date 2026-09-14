@@ -1,0 +1,28 @@
+<p-confirmdialog />
+
+@if (task(); as task) {
+  <div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
+    <h1 class="text-lg font-semibold">{{ task.title }}</h1>
+
+    @if (task.notes) {
+      <p class="text-sm text-gray-600">{{ task.notes }}</p>
+    }
+
+    @if (task.dueDate) {
+      <p class="text-sm text-gray-400">Due {{ task.dueDate.toDate() | date: 'medium' }}</p>
+    }
+
+    <p class="text-sm text-gray-400">Priority: {{ task.priority }}</p>
+
+    <div class="flex gap-2">
+      <p-button
+        [label]="task.status === 'completed' ? 'Mark open' : 'Mark complete'"
+        styleClass="flex-1"
+        (onClick)="toggleComplete()"
+      />
+      <p-button label="Delete" severity="danger" [outlined]="true" (onClick)="confirmDelete()" />
+    </div>
+  </div>
+} @else {
+  <p class="p-4 text-center text-sm text-gray-400">Task not found.</p>
+}

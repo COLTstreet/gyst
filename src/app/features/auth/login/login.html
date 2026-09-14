@@ -1,0 +1,8 @@
+<div class="flex min-h-dvh flex-col items-center justify-center gap-6 bg-gray-50 px-6 text-center">
+  <h1 class="text-4xl font-bold tracking-tight">GYST</h1>
+  <p class="text-gray-500">Get Your Shit Together</p>
+  <p-button label="Sign in with Google" icon="pi pi-google" [loading]="signingIn()" (onClick)="signIn()" />
+  @if (error(); as error) {
+    <p-message severity="error" styleClass="max-w-xs">{{ error }}</p-message>
+  }
+</div>

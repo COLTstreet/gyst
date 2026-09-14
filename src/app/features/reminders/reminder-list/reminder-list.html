@@ -1,0 +1,30 @@
+<div class="mx-auto flex max-w-lg flex-col gap-6 p-4">
+  <h1 class="text-lg font-semibold">Reminders</h1>
+
+  <section class="flex flex-col gap-2">
+    <h2 class="text-xs font-medium uppercase text-gray-400">Upcoming</h2>
+    @for (reminder of upcoming(); track reminder.id) {
+      <div class="flex items-center gap-3 rounded-lg bg-white p-3 shadow-sm">
+        <div class="flex-1">
+          <p class="text-sm">{{ reminder.message }}</p>
+          <p class="text-xs text-gray-400">{{ reminder.triggerAt.toDate() | date: 'medium' }}</p>
+        </div>
+        <button type="button" class="pi pi-times text-gray-300" aria-label="Cancel reminder" (click)="cancelReminder(reminder.id)"></button>
+      </div>
+    } @empty {
+      <p class="py-4 text-center text-sm text-gray-400">Nothing upcoming.</p>
+    }
+  </section>
+
+  <section class="flex flex-col gap-2">
+    <h2 class="text-xs font-medium uppercase text-gray-400">Past</h2>
+    @for (reminder of past(); track reminder.id) {
+      <div class="rounded-lg bg-gray-100 p-3 text-gray-500 shadow-sm">
+        <p class="text-sm">{{ reminder.message }}</p>
+        <p class="text-xs text-gray-400">{{ reminder.triggerAt.toDate() | date: 'medium' }} · {{ reminder.status }}</p>
+      </div>
+    } @empty {
+      <p class="py-4 text-center text-sm text-gray-400">No past reminders.</p>
+    }
+  </section>
+</div>

@@ -1,0 +1,30 @@
+<div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
+  <header class="flex items-center justify-between">
+    <h1 class="text-lg font-semibold">Lists</h1>
+    <p-button icon="pi pi-plus" [rounded]="true" (onClick)="openCreateDialog()" />
+  </header>
+
+  <div class="grid grid-cols-2 gap-3">
+    @for (list of listService.lists(); track list.id) {
+      <a [routerLink]="['/lists', list.id]" class="rounded-lg bg-white p-4 shadow-sm">
+        <p class="font-medium">{{ list.name }}</p>
+        <p class="text-xs text-gray-400">{{ list.items.length }} items</p>
+      </a>
+    } @empty {
+      <p class="col-span-2 py-8 text-center text-sm text-gray-400">No lists yet.</p>
+    }
+  </div>
+</div>
+
+<p-dialog header="New list" [(visible)]="showCreateDialog" [modal]="true" [style]="{ width: '20rem' }">
+  <input
+    pInputText
+    class="w-full"
+    placeholder="List name"
+    [ngModel]="newListName()"
+    (ngModelChange)="newListName.set($event)"
+  />
+  <div class="mt-4 flex justify-end gap-2">
+    <p-button label="Create" [disabled]="!newListName().trim()" (onClick)="createList()" />
+  </div>
+</p-dialog>
