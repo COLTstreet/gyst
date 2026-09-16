@@ -15,9 +15,9 @@ interface NavItem {
 })
 export class Nav {
   protected readonly items: NavItem[] = [
-    { path: '/today', label: 'Today', icon: 'pi pi-home' },
+    { path: '/today', label: 'Today', icon: 'pi pi-sun' },
     { path: '/tasks', label: 'Tasks', icon: 'pi pi-check-square' },
-    { path: '/lists', label: 'Lists', icon: 'pi pi-list' },
+    { path: '/lists', label: 'Lists', icon: 'pi pi-shopping-bag' },
     { path: '/reminders', label: 'Reminders', icon: 'pi pi-bell' },
     { path: '/carole', label: 'Carole', icon: 'pi pi-heart' },
   ];

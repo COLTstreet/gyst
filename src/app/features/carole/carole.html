@@ -5,9 +5,7 @@
   </header>
 
   @for (section of caroleService.profile()?.sections ?? []; track section.id) {
-    <section class="rounded-lg bg-white p-4 shadow-sm">
-      <h2 class="mb-3 font-medium">{{ section.title }}</h2>
-
+    <p-card [header]="section.title">
       @switch (section.type) {
         @case ('checklist') {
           <ul class="flex flex-col gap-2">
@@ -18,7 +16,11 @@
                   [ngModel]="item.checked"
                   (ngModelChange)="toggleChecklistItem(section.id, item.id, $event)"
                 />
-                <span class="text-sm" [class.line-through]="item.checked" [class.text-gray-400]="item.checked">
+                <span
+                  class="text-sm"
+                  [style.text-decoration]="item.checked ? 'line-through' : 'none'"
+                  [style.color]="item.checked ? 'var(--p-card-subtitle-color)' : 'var(--p-card-color)'"
+                >
                   {{ item.text }}
                 </span>
               </li>
@@ -29,7 +31,7 @@
           <dl class="flex flex-col gap-1 text-sm">
             @for (item of asKeyValue(section.items); track item.id) {
               <div class="flex justify-between gap-4">
-                <dt class="text-gray-500">{{ item.key }}</dt>
+                <dt style="color: var(--p-card-subtitle-color)">{{ item.key }}</dt>
                 <dd class="text-right">{{ item.value }}</dd>
               </div>
             }
@@ -44,20 +46,25 @@
         }
       }
 
-      <form class="mt-3 flex gap-2" (submit)="$event.preventDefault(); addItem(section)">
-        <input
-          pInputText
-          class="flex-1"
-          [placeholder]="section.type === 'keyValue' ? 'Key: Value' : 'Add item…'"
-          [ngModel]="draftFor(section.id)"
-          (ngModelChange)="setDraft(section.id, $event)"
-          [name]="'draft-' + section.id"
-        />
-        <p-button type="submit" icon="pi pi-plus" [disabled]="!draftFor(section.id).trim()" />
+      <form class="mt-3" (submit)="$event.preventDefault(); addItem(section)">
+        <p-inputgroup>
+          <input
+            pInputText
+            [placeholder]="section.type === 'keyValue' ? 'Key: Value' : 'Add item…'"
+            [ngModel]="draftFor(section.id)"
+            (ngModelChange)="setDraft(section.id, $event)"
+            [name]="'draft-' + section.id"
+          />
+          <p-inputgroup-addon>
+            <p-button type="submit" icon="pi pi-plus" [text]="true" [disabled]="!draftFor(section.id).trim()" />
+          </p-inputgroup-addon>
+        </p-inputgroup>
       </form>
-    </section>
+    </p-card>
   } @empty {
-    <p class="py-8 text-center text-sm text-gray-400">No sections yet — add one to get started.</p>
+    <p class="py-8 text-center text-sm" style="color: var(--p-text-muted-color)">
+      No sections yet — add one to get started.
+    </p>
   }
 </div>
 
@@ -73,6 +80,7 @@
       [options]="sectionTypeOptions"
       optionLabel="label"
       optionValue="value"
+      [appendTo]="'body'"
       [ngModel]="newSectionType()"
       (ngModelChange)="newSectionType.set($event)"
     />

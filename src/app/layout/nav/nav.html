@@ -1,11 +1,16 @@
-<nav class="fixed inset-x-0 bottom-0 z-10 flex border-t border-gray-200 bg-white">
+<nav
+  class="fixed inset-x-0 bottom-0 z-10 flex border-t px-2 py-3"
+  style="background: var(--p-surface-800); border-color: var(--p-surface-700)"
+>
   @for (item of items; track item.path) {
     <a
       [routerLink]="item.path"
-      routerLinkActive="text-blue-600"
-      class="flex flex-1 flex-col items-center gap-1 py-2 text-xs text-gray-500"
+      routerLinkActive
+      #active="routerLinkActive"
+      class="flex flex-1 flex-col items-center gap-2 text-[11px] transition-colors"
+      [style.color]="active.isActive ? 'var(--p-primary-color)' : 'var(--p-text-muted-color)'"
     >
-      <i [class]="item.icon" class="text-lg"></i>
+      <i [class]="item.icon" class="text-2xl leading-none"></i>
       <span>{{ item.label }}</span>
     </a>
   }

@@ -57,3 +57,8 @@ firebase-debug.log
 firebase-debug.*.log
 ui-debug.log
 .runtimeconfig.json
+
+# Service account keys — never commit these, wherever they land
+*serviceAccountKey*.json
+*firebase-adminsdk*.json
+**/scripts/*key*.json

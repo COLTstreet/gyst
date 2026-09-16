@@ -45,6 +45,10 @@ export const routes: Routes = [
         path: 'carole',
         loadComponent: () => import('./features/carole/carole').then((m) => m.Carole),
       },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/settings/settings').then((m) => m.Settings),
+      },
     ],
   },
   { path: '**', redirectTo: 'today' },

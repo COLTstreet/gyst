@@ -1,7 +1,10 @@
 {
-  "name": "gyst-app",
-  "short_name": "gyst-app",
+  "name": "GYST",
+  "short_name": "GYST",
+  "description": "Get Your Shit Together — personal task/list/reminder/journal assistant",
   "display": "standalone",
+  "theme_color": "#222222",
+  "background_color": "#222222",
   "scope": "./",
   "start_url": "./",
   "icons": [

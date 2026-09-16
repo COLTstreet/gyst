@@ -2,36 +2,47 @@
   <div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
     <h1 class="text-lg font-semibold">{{ list.name }}</h1>
 
-    <form class="flex gap-2" (submit)="$event.preventDefault(); addItem()">
-      <input
-        pInputText
-        class="flex-1"
-        placeholder="Add item…"
-        [ngModel]="newItemText()"
-        (ngModelChange)="newItemText.set($event)"
-        name="newItem"
-      />
-      <p-button type="submit" icon="pi pi-plus" [disabled]="!newItemText().trim()" />
+    <form (submit)="$event.preventDefault(); addItem()">
+      <p-inputgroup>
+        <input
+          pInputText
+          placeholder="Add item…"
+          [ngModel]="newItemText()"
+          (ngModelChange)="newItemText.set($event)"
+          name="newItem"
+        />
+        <p-inputgroup-addon>
+          <p-button type="submit" icon="pi pi-plus" [text]="true" [disabled]="!newItemText().trim()" />
+        </p-inputgroup-addon>
+      </p-inputgroup>
     </form>
 
     <ul class="flex flex-col gap-2">
       @for (item of list.items; track item.id) {
-        <li class="flex items-center gap-3 rounded-lg bg-white p-3 shadow-sm">
-          <p-checkbox
-            [binary]="true"
-            [ngModel]="item.checked"
-            (ngModelChange)="toggleChecked(item.id, $event)"
-          />
-          <span class="flex-1 text-sm" [class.line-through]="item.checked" [class.text-gray-400]="item.checked">
-            {{ item.text }}
-          </span>
-          <button type="button" class="pi pi-trash text-gray-300" aria-label="Remove item" (click)="removeItem(item.id)"></button>
+        <li>
+          <p-card>
+            <div class="flex items-center gap-3">
+              <p-checkbox
+                [binary]="true"
+                [ngModel]="item.checked"
+                (ngModelChange)="toggleChecked(item.id, $event)"
+              />
+              <span
+                class="flex-1 text-sm"
+                [style.text-decoration]="item.checked ? 'line-through' : 'none'"
+                [style.color]="item.checked ? 'var(--p-card-subtitle-color)' : 'var(--p-card-color)'"
+              >
+                {{ item.text }}
+              </span>
+              <p-button icon="pi pi-trash" [text]="true" severity="secondary" ariaLabel="Remove item" (onClick)="removeItem(item.id)" />
+            </div>
+          </p-card>
         </li>
       } @empty {
-        <p class="py-8 text-center text-sm text-gray-400">This list is empty.</p>
+        <p class="py-8 text-center text-sm" style="color: var(--p-text-muted-color)">This list is empty.</p>
       }
     </ul>
   </div>
 } @else {
-  <p class="p-4 text-center text-sm text-gray-400">List not found.</p>
+  <p class="p-4 text-center text-sm" style="color: var(--p-text-muted-color)">List not found.</p>
 }

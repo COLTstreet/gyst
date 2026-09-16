@@ -1,4 +1,7 @@
-<div class="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm">
+<div
+  class="rounded-lg border p-3 text-sm"
+  style="border-color: var(--p-orange-800); background: color-mix(in srgb, var(--p-orange-950) 60%, transparent)"
+>
   <p class="mb-2">{{ confirmation().description }}</p>
   <div class="flex gap-2">
     <p-button label="Confirm" severity="danger" (onClick)="confirm(true)" />

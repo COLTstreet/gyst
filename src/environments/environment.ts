@@ -9,5 +9,5 @@ export const environment = {
     messagingSenderId: '746091551368',
     appId: '1:746091551368:web:6b6fe495f93658d2e95d3d',
   },
-  vapidKey: 'REPLACE_ME', // FCM web push certificate — from Project settings → Cloud Messaging → Web Push certificates
+  vapidKey: 'BI6Kh1KK9ICvU0vK-uIdSRnWFdYiD6ilgmDnuptuDhH-Ei0f-1_HdwAwcCvLsTZ3zxJPeFUfNFtw28bLdCTAeaY',
 };

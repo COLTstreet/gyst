@@ -4,6 +4,9 @@ import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { CardModule } from 'primeng/card';
 import { SelectModule } from 'primeng/select';
 import { CaroleService } from '../../core/services/carole.service';
 import type {
@@ -15,7 +18,17 @@ import type {
 } from '../../shared/models';
 
 @Component({
-  imports: [FormsModule, ButtonModule, CheckboxModule, DialogModule, InputTextModule, SelectModule],
+  imports: [
+    FormsModule,
+    ButtonModule,
+    CheckboxModule,
+    DialogModule,
+    InputTextModule,
+    InputGroupModule,
+    InputGroupAddonModule,
+    CardModule,
+    SelectModule,
+  ],
   selector: 'app-carole',
   styleUrl: './carole.css',
   templateUrl: './carole.html',

@@ -3,13 +3,16 @@ import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { CardModule } from 'primeng/card';
 import { FormsModule } from '@angular/forms';
 import { DailyNoteService } from '../../core/services/daily-note.service';
 import { TaskService } from '../../core/services/task.service';
 import { ReminderService } from '../../core/services/reminder.service';
 
 @Component({
-  imports: [ButtonModule, InputTextModule, FormsModule, DatePipe],
+  imports: [ButtonModule, InputTextModule, InputGroupModule, InputGroupAddonModule, CardModule, FormsModule, DatePipe],
   selector: 'app-today',
   styleUrl: './today.css',
   templateUrl: './today.html',
@@ -23,7 +26,11 @@ export class Today {
   protected readonly draft = signal('');
 
   protected readonly viewedDate = this.dailyNoteService.viewedDate;
-  protected readonly entries = computed(() => this.dailyNoteService.currentNote()?.entries ?? []);
+  protected readonly entries = computed(() =>
+    [...(this.dailyNoteService.currentNote()?.entries ?? [])].sort(
+      (a, b) => b.timestamp.toMillis() - a.timestamp.toMillis(),
+    ),
+  );
 
   protected readonly isToday = computed(() => sameDay(this.viewedDate(), new Date()));
 
@@ -43,6 +50,10 @@ export class Today {
     if (!text) return;
     await this.dailyNoteService.addEntry(text);
     this.draft.set('');
+  }
+
+  protected async removeEntry(entryId: string): Promise<void> {
+    await this.dailyNoteService.removeEntry(entryId);
   }
 
   protected goToPreviousDay(): void {

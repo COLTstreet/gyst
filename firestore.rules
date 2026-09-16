@@ -7,37 +7,55 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
-    // Admin-SDK-only: googleRefreshToken and other server-managed fields must
-    // never be client-writable. Client writes are blocked entirely; all
-    // updates go through Cloud Functions using the Admin SDK (which bypasses
-    // these rules).
+    // A get() on a not-yet-created doc has `resource == null`, so a rule
+    // that dereferences resource.data (e.g. isOwner(resource.data.userId))
+    // errors out and is denied — even though there's nothing to protect on a
+    // document that doesn't exist. Several services check existence via a
+    // plain get() before deciding whether to create (e.g. DailyNoteService),
+    // so `read` must tolerate a null resource; a "not found" response leaks
+    // no data either way. `update`/`delete` don't need this — they only ever
+    // target documents the caller already knows exist.
+
+    // googleRefreshToken is Admin-SDK-only (set later by the Calendar OAuth
+    // callback, which bypasses these rules) — blocked at the field level
+    // below, not by blocking the whole document. The client legitimately
+    // needs to write here itself: creating its own user doc on first sign-in
+    // (AuthService.ensureUserDoc), and registering FCM tokens
+    // (NotificationService.registerToken).
     match /users/{userId} {
       allow read: if isOwner(userId);
-      allow write: if false;
+      allow create: if isOwner(userId) && !('googleRefreshToken' in request.resource.data);
+      allow update: if isOwner(userId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['googleRefreshToken']);
     }
 
     match /tasks/{taskId} {
-      allow read, update, delete: if isOwner(resource.data.userId);
+      allow read: if resource == null || isOwner(resource.data.userId);
+      allow update, delete: if isOwner(resource.data.userId);
       allow create: if isOwner(request.resource.data.userId);
     }
 
     match /lists/{listId} {
-      allow read, update, delete: if isOwner(resource.data.userId);
+      allow read: if resource == null || isOwner(resource.data.userId);
+      allow update, delete: if isOwner(resource.data.userId);
       allow create: if isOwner(request.resource.data.userId);
     }
 
     match /reminders/{reminderId} {
-      allow read, update, delete: if isOwner(resource.data.userId);
+      allow read: if resource == null || isOwner(resource.data.userId);
+      allow update, delete: if isOwner(resource.data.userId);
       allow create: if isOwner(request.resource.data.userId);
     }
 
     match /dailyNotes/{docId} {
-      allow read, update, delete: if isOwner(resource.data.userId);
+      allow read: if resource == null || isOwner(resource.data.userId);
+      allow update, delete: if isOwner(resource.data.userId);
       allow create: if isOwner(request.resource.data.userId);
     }
 
     match /conversations/{conversationId} {
-      allow read, update, delete: if isOwner(resource.data.userId);
+      allow read: if resource == null || isOwner(resource.data.userId);
+      allow update, delete: if isOwner(resource.data.userId);
       allow create: if isOwner(request.resource.data.userId);
 
       match /messages/{messageId} {

@@ -23,6 +23,12 @@ export interface CreateReminderInput {
   recurrence?: ReminderRecurrence;
 }
 
+export interface UpdateReminderInput {
+  message: string;
+  triggerAt: Date;
+  recurrence?: ReminderRecurrence;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ReminderService {
   readonly reminders = signal<Reminder[]>([]);
@@ -62,6 +68,14 @@ export class ReminderService {
       status: 'pending',
       recurrence: input.recurrence ?? null,
       createdAt: serverTimestamp(),
+    });
+  }
+
+  async updateReminder(reminderId: string, input: UpdateReminderInput): Promise<void> {
+    await updateDoc(doc(db, 'reminders', reminderId), {
+      message: input.message,
+      triggerAt: Timestamp.fromDate(input.triggerAt),
+      recurrence: input.recurrence ?? null,
     });
   }
 

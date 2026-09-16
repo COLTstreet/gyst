@@ -7,3 +7,34 @@
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @import 'primeicons/primeicons.css';
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background: var(--p-surface-900);
+    color: var(--p-text-color);
+    font-family: 'Rubik', system-ui, sans-serif;
+  }
+
+  /* Preflight is off (see above), so the browser default underline on <a>
+     otherwise shows through everywhere — nav, list/task cards, etc. */
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* Same story for <ul>/<ol> bullets + indent (task/list/Carole rows use
+     plain lists for semantics, not for their default appearance). This had
+     been incidentally suppressed by the parent being display:flex, which
+     isn't a reliable substitute for an explicit reset. */
+  ul,
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}

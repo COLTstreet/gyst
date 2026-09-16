@@ -3,11 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { CardModule } from 'primeng/card';
 import { FormsModule } from '@angular/forms';
 import { ListService } from '../../../core/services/list.service';
 
 @Component({
-  imports: [CheckboxModule, ButtonModule, InputTextModule, FormsModule],
+  imports: [CheckboxModule, ButtonModule, InputTextModule, InputGroupModule, InputGroupAddonModule, CardModule, FormsModule],
   selector: 'app-list-detail',
   styleUrl: './list-detail.css',
   templateUrl: './list-detail.html',

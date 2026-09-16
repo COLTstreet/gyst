@@ -1,9 +1,8 @@
 <div
   class="mb-2 max-w-[85%] rounded-lg px-3 py-2 text-sm"
   [class.ml-auto]="message().role === 'user'"
-  [class.bg-blue-600]="message().role === 'user'"
-  [class.text-white]="message().role === 'user'"
-  [class.bg-gray-100]="message().role === 'assistant'"
+  [style.background]="message().role === 'user' ? 'var(--p-primary-color)' : 'var(--p-surface-700)'"
+  [style.color]="message().role === 'user' ? 'var(--p-primary-contrast-color)' : 'var(--p-text-color)'"
 >
   {{ message().content }}
 </div>

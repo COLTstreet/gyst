@@ -1,0 +1,52 @@
+<div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
+  <h1 class="text-lg font-semibold">Settings</h1>
+
+  @if (authService.user(); as user) {
+    <p-card>
+      <div class="flex items-center gap-3">
+        @if (user.photoURL) {
+          <img
+            [src]="user.photoURL"
+            referrerpolicy="no-referrer"
+            class="h-12 w-12 rounded-full object-cover"
+            [alt]="user.displayName ?? 'Account'"
+          />
+        }
+        <div class="flex-1">
+          <p class="font-medium">{{ user.displayName }}</p>
+          <p class="text-xs" style="color: var(--p-card-subtitle-color)">{{ user.email }}</p>
+        </div>
+      </div>
+      <p-button label="Sign out" icon="pi pi-sign-out" severity="secondary" [outlined]="true" styleClass="mt-4 w-full" (onClick)="signOut()" />
+    </p-card>
+  }
+
+  <p-card header="Notifications">
+    <div class="flex items-center justify-between gap-3">
+      <p class="text-sm" style="color: var(--p-card-subtitle-color)">
+        Get notified about due tasks and reminders.
+      </p>
+      <p-tag
+        [value]="notificationService.permission()"
+        [severity]="notificationService.permission() === 'granted' ? 'success' : notificationService.permission() === 'denied' ? 'danger' : 'secondary'"
+      />
+    </div>
+    <p-button
+      label="Enable notifications"
+      icon="pi pi-bell"
+      styleClass="mt-4 w-full"
+      [disabled]="notificationService.permission() === 'granted'"
+      (onClick)="enableNotifications()"
+    />
+  </p-card>
+
+  <p-card header="Calendar">
+    <div class="flex items-center justify-between gap-3">
+      <p class="text-sm" style="color: var(--p-card-subtitle-color)">
+        Let the assistant add events to your Google Calendar.
+      </p>
+      <p-tag value="Coming soon" severity="secondary" />
+    </div>
+    <p-button label="Connect Google Calendar" icon="pi pi-calendar" styleClass="mt-4 w-full" [disabled]="true" />
+  </p-card>
+</div>

@@ -78,4 +78,12 @@ export class DailyNoteService {
       });
     }
   }
+
+  async removeEntry(entryId: string): Promise<void> {
+    const note = this.currentNote();
+    if (!note) return;
+
+    const entries = note.entries.filter((entry) => entry.id !== entryId);
+    await updateDoc(doc(db, 'dailyNotes', note.id), { entries, updatedAt: serverTimestamp() });
+  }
 }

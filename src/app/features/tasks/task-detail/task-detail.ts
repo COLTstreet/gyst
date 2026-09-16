@@ -1,13 +1,16 @@
 import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { TagModule } from 'primeng/tag';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DatePipe } from '@angular/common';
 import { TaskService } from '../../../core/services/task.service';
+import { TASK_PRIORITY_SEVERITY } from '../../../shared/task-priority-severity';
 
 @Component({
-  imports: [ButtonModule, ConfirmDialogModule, DatePipe],
+  imports: [ButtonModule, CardModule, TagModule, ConfirmDialogModule, DatePipe],
   providers: [ConfirmationService],
   selector: 'app-task-detail',
   styleUrl: './task-detail.css',
@@ -22,6 +25,7 @@ export class TaskDetail {
   private readonly taskId = this.route.snapshot.paramMap.get('id')!;
 
   protected readonly task = computed(() => this.taskService.tasks().find((t) => t.id === this.taskId));
+  protected readonly prioritySeverity = TASK_PRIORITY_SEVERITY;
 
   protected async toggleComplete(): Promise<void> {
     const task = this.task();

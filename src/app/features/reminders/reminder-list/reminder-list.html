@@ -1,30 +1,109 @@
-<div class="mx-auto flex max-w-lg flex-col gap-6 p-4">
-  <h1 class="text-lg font-semibold">Reminders</h1>
+<div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
+  <header class="flex items-center justify-between">
+    <h1 class="text-lg font-semibold">Reminders</h1>
+    <p-button icon="pi pi-plus" [rounded]="true" (onClick)="openCreateDialog()" />
+  </header>
 
   <section class="flex flex-col gap-2">
-    <h2 class="text-xs font-medium uppercase text-gray-400">Upcoming</h2>
+    <p-divider align="left" type="solid">
+      <span class="text-xs font-medium uppercase" style="color: var(--p-text-muted-color)">Upcoming</span>
+    </p-divider>
     @for (reminder of upcoming(); track reminder.id) {
-      <div class="flex items-center gap-3 rounded-lg bg-white p-3 shadow-sm">
-        <div class="flex-1">
-          <p class="text-sm">{{ reminder.message }}</p>
-          <p class="text-xs text-gray-400">{{ reminder.triggerAt.toDate() | date: 'medium' }}</p>
+      <p-card styleClass="cursor-pointer" (click)="openEditDialog(reminder)">
+        <div class="flex items-center gap-3">
+          <div class="flex-1">
+            <p class="text-sm">{{ reminder.message }}</p>
+            <p class="text-xs" style="color: var(--p-card-subtitle-color)">
+              {{ reminder.triggerAt.toDate() | date: 'medium' }}
+              @if (reminder.recurrence) {
+                · repeats {{ reminder.recurrence.frequency }}
+              }
+            </p>
+          </div>
+          <p-button
+            icon="pi pi-times"
+            [text]="true"
+            severity="secondary"
+            ariaLabel="Cancel reminder"
+            (onClick)="$event.stopPropagation(); cancelReminder(reminder.id)"
+          />
         </div>
-        <button type="button" class="pi pi-times text-gray-300" aria-label="Cancel reminder" (click)="cancelReminder(reminder.id)"></button>
-      </div>
+      </p-card>
     } @empty {
-      <p class="py-4 text-center text-sm text-gray-400">Nothing upcoming.</p>
+      <p class="py-4 text-center text-sm" style="color: var(--p-text-muted-color)">Nothing upcoming.</p>
     }
   </section>
 
   <section class="flex flex-col gap-2">
-    <h2 class="text-xs font-medium uppercase text-gray-400">Past</h2>
+    <p-divider align="left" type="solid">
+      <span class="text-xs font-medium uppercase" style="color: var(--p-text-muted-color)">Past</span>
+    </p-divider>
     @for (reminder of past(); track reminder.id) {
-      <div class="rounded-lg bg-gray-100 p-3 text-gray-500 shadow-sm">
+      <p-card styleClass="opacity-60">
         <p class="text-sm">{{ reminder.message }}</p>
-        <p class="text-xs text-gray-400">{{ reminder.triggerAt.toDate() | date: 'medium' }} · {{ reminder.status }}</p>
-      </div>
+        <p class="text-xs" style="color: var(--p-card-subtitle-color)">
+          {{ reminder.triggerAt.toDate() | date: 'medium' }} · {{ reminder.status }}
+        </p>
+      </p-card>
     } @empty {
-      <p class="py-4 text-center text-sm text-gray-400">No past reminders.</p>
+      <p class="py-4 text-center text-sm" style="color: var(--p-text-muted-color)">No past reminders.</p>
     }
   </section>
 </div>
+
+<p-dialog
+  [header]="editingId() ? 'Edit reminder' : 'New reminder'"
+  [(visible)]="showDialog"
+  [modal]="true"
+  [style]="{ width: '22rem' }"
+>
+  <div class="flex flex-col gap-3">
+    <input
+      pInputText
+      placeholder="Message"
+      [ngModel]="formMessage()"
+      (ngModelChange)="formMessage.set($event)"
+    />
+
+    <p-datepicker
+      placeholder="Date & time"
+      [showIcon]="true"
+      [showTime]="true"
+      [appendTo]="'body'"
+      [ngModel]="formTriggerAt()"
+      (ngModelChange)="formTriggerAt.set($event)"
+    />
+
+    <div class="flex items-center gap-2">
+      <p-checkbox [binary]="true" [ngModel]="formRecurs()" (ngModelChange)="formRecurs.set($event)" inputId="recurs" />
+      <label for="recurs" class="text-sm">Repeats</label>
+    </div>
+
+    @if (formRecurs()) {
+      <div class="flex gap-2">
+        <p-select
+          class="flex-1"
+          [options]="frequencyOptions"
+          optionLabel="label"
+          optionValue="value"
+          [appendTo]="'body'"
+          [ngModel]="formFrequency()"
+          (ngModelChange)="formFrequency.set($event)"
+        />
+        <p-inputnumber
+          styleClass="w-20"
+          [min]="1"
+          [ngModel]="formInterval()"
+          (ngModelChange)="formInterval.set($event)"
+        />
+      </div>
+    }
+
+    <div class="flex gap-2">
+      <p-button label="Save" styleClass="flex-1" [disabled]="!canSave()" (onClick)="save()" />
+      @if (editingId()) {
+        <p-button label="Delete" severity="danger" [outlined]="true" (onClick)="deleteFromDialog()" />
+      }
+    </div>
+  </div>
+</p-dialog>
