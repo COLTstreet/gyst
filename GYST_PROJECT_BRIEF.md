@@ -21,7 +21,7 @@ Every AI action has a manual UI equivalent. The AI is an optional convenience la
 1. Task management (Firestore)
 2. Named, multiple editable lists (e.g. groceries) — array-of-items per list document
 3. Standalone reminders (message + trigger time, not attached to tasks/events), with optional recurrence
-4. Write-only Google Calendar event creation (Calendar API `events.insert`, scope `calendar.events`) — NOT a full calendar view or two-way sync
+4. ~~Google Calendar event creation~~ — descoped; not worth the OAuth/consent-screen overhead versus just using the native Calendar app
 5. Daily notes / journal feature — replaces the physical pocketbook. One Firestore doc per day, array of freeform timestamped entries, no tags/structure
 6. AI assistant chat with tool-calling actions
 7. Push notifications via FCM for reminders/due tasks, sent by a scheduled Cloud Function running **every 5 minutes**
@@ -33,8 +33,6 @@ Every AI action has a manual UI equivalent. The AI is an optional convenience la
 ```
 users/{userId}
   - displayName, email, photoURL
-  - googleCalendarConnected: boolean
-  - googleRefreshToken: string       // Calendar API refresh token — Admin SDK access only, never client-readable
   - fcmTokens: [string]
   - createdAt
 
@@ -72,7 +70,7 @@ caroleProfile/{userId}          // single doc
 
 Context (current tasks/lists/reminders) is injected directly into the prompt — so tools are **action-only**, no read/list tools needed (except `get_daily_notes(date)`, since notes aren't in standard context injection to avoid prompt bloat).
 
-**Auto-executing tools:** `create_task`, `update_task` (also handles marking complete via `status` field), `create_list`, `add_list_item`, `update_list_item`, `create_reminder`, `create_calendar_event`, `add_gift_idea`, `mark_gift_purchased`, `add_date_idea`, `add_carole_note`, `add_to_carole_section` (generic), `add_daily_note`, `get_daily_notes`
+**Auto-executing tools:** `create_task`, `update_task` (also handles marking complete via `status` field), `create_list`, `add_list_item`, `update_list_item`, `create_reminder`, `add_gift_idea`, `mark_gift_purchased`, `add_date_idea`, `add_carole_note`, `add_to_carole_section` (generic), `add_daily_note`, `get_daily_notes`
 
 **Destructive tools requiring confirmation:** `delete_task`, `cancel_reminder`
 - Cloud Function intercepts these before execution, sets `pendingConfirmation` on the conversation doc, returns "awaiting confirmation" to client
@@ -94,8 +92,6 @@ functions/src/
 │   ├── toolDefinitions.ts
 │   ├── toolExecutor.ts
 │   └── destructiveTools.ts        // DESTRUCTIVE_TOOLS set + confirmation logic
-├── calendar/
-│   └── createEvent.ts             // uses googleapis npm package, OAuth2 client with refresh token
 ├── scheduled/
 │   └── checkReminders.ts          // onSchedule "every 5 minutes"
 └── shared/
@@ -106,13 +102,6 @@ functions/src/
 Use Firebase **Callable Functions** (`onCall`) for the chat endpoint — automatic auth verification, typed request/response.
 
 Error handling: wrap Claude API calls and Firestore writes separately (no partial writes on failure); tool execution failures are caught and surfaced to Claude as a tool result (not a raw crash) so it can respond naturally.
-
-## Google OAuth + Calendar Flow
-
-- Request scope `https://www.googleapis.com/auth/calendar.events` (not the broader `calendar` scope) — least privilege, write-only
-- Firebase Auth's default `signInWithPopup` access token is short-lived and NOT sufficient for server-side use — need a **refresh token** via a proper OAuth consent flow (`access_type: 'offline'`, `prompt: 'consent'`), likely via a separate "Connect Google Calendar" button/flow outside Firebase Auth's default popup
-- Store refresh token in `users/{userId}.googleRefreshToken`, Admin-SDK-only access via security rules
-- Cloud Function uses `googleapis` npm package's OAuth2Client with the refresh token; it auto-handles access token refresh
 
 ## Angular App Structure
 
@@ -161,11 +150,8 @@ src/app/
 - Logo direction: bold wordmark tile (not an icon/metaphor) — the name carries the personality on its own
 
 ## Open / Not Yet Designed
-- Settings screen (Calendar connect/disconnect, notification permissions, sign out)
-- Onboarding flow (sign-in → notification permission → Calendar connect prompt)
-- Firestore security rules (actual `firestore.rules` syntax — concept only agreed)
-- Offline/empty/error states across screens
-- PWA manifest specifics (icon assets, theme color)
+- ~~Onboarding flow~~ — descoped; not worth it for a single-user personal app, Settings already surfaces the notification toggle
+- Offline indicator (empty states and a global error toast exist; no explicit "you're offline" UI cue)
 - Data export/backup approach
 - Testing approach
 - Deployment/CI setup (staging vs. production Firebase project)

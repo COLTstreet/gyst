@@ -16,17 +16,11 @@ service cloud.firestore {
     // no data either way. `update`/`delete` don't need this — they only ever
     // target documents the caller already knows exist.
 
-    // googleRefreshToken is Admin-SDK-only (set later by the Calendar OAuth
-    // callback, which bypasses these rules) — blocked at the field level
-    // below, not by blocking the whole document. The client legitimately
-    // needs to write here itself: creating its own user doc on first sign-in
-    // (AuthService.ensureUserDoc), and registering FCM tokens
+    // The client writes here itself: creating its own user doc on first
+    // sign-in (AuthService.ensureUserDoc) and registering FCM tokens
     // (NotificationService.registerToken).
     match /users/{userId} {
-      allow read: if isOwner(userId);
-      allow create: if isOwner(userId) && !('googleRefreshToken' in request.resource.data);
-      allow update: if isOwner(userId)
-        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['googleRefreshToken']);
+      allow read, write: if isOwner(userId);
     }
 
     match /tasks/{taskId} {

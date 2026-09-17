@@ -122,20 +122,6 @@ export function buildToolDefinitions(): Tool[] {
       },
     },
     {
-      name: 'create_calendar_event',
-      description: 'Create a write-only Google Calendar event. Cannot read or modify existing events.',
-      input_schema: {
-        type: 'object',
-        properties: {
-          summary: { type: 'string' },
-          description: { type: 'string' },
-          startDateTime: { type: 'string', description: 'ISO 8601 date/time' },
-          endDateTime: { type: 'string', description: 'ISO 8601 date/time' },
-        },
-        required: ['summary', 'startDateTime', 'endDateTime'],
-      },
-    },
-    {
       name: 'add_gift_idea',
       description: "Add a gift idea to Carole's page.",
       input_schema: {

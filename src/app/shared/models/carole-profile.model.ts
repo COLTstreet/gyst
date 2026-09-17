@@ -6,6 +6,8 @@ export interface CaroleChecklistItem {
   id: string;
   text: string;
   checked: boolean;
+  /** Optional reference link, e.g. the product page the idea came from. */
+  url?: string | null;
 }
 
 export interface CaroleKeyValueItem {

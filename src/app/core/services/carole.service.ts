@@ -72,4 +72,16 @@ export class CaroleService {
 
     await updateDoc(doc(db, 'caroleProfile', user.uid), { sections, updatedAt: serverTimestamp() });
   }
+
+  async removeSectionItem(sectionId: string, itemId: string): Promise<void> {
+    const user = this.authService.user();
+    if (!user) throw new Error('Not signed in');
+
+    const sections = (this.profile()?.sections ?? []).map((section) => {
+      if (section.id !== sectionId) return section;
+      return { ...section, items: section.items.filter((item) => item.id !== itemId) };
+    });
+
+    await updateDoc(doc(db, 'caroleProfile', user.uid), { sections, updatedAt: serverTimestamp() });
+  }
 }

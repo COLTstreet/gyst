@@ -41,7 +41,6 @@ export class AuthService {
         displayName: firebaseUser.displayName ?? '',
         email: firebaseUser.email ?? '',
         photoURL: firebaseUser.photoURL ?? null,
-        googleCalendarConnected: false,
         fcmTokens: [],
         createdAt: serverTimestamp(),
       });

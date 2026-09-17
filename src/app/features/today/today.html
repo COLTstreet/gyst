@@ -8,9 +8,14 @@
       ariaLabel="Previous day"
       (onClick)="goToPreviousDay()"
     />
-    <h1 class="text-lg font-semibold">
-      {{ isToday() ? 'Today' : (viewedDate() | date: 'EEEE, MMM d') }}
-    </h1>
+    <div class="text-center">
+      <h1 class="text-lg font-semibold">
+        {{ isToday() ? 'Today' : (viewedDate() | date: 'EEEE') }}
+      </h1>
+      <p class="text-xs" style="color: var(--p-text-muted-color)">
+        {{ viewedDate() | date: 'MMMM d, y' }}
+      </p>
+    </div>
     <p-button
       icon="pi pi-chevron-right"
       [text]="true"

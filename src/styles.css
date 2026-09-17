@@ -37,4 +37,28 @@
     margin: 0;
     padding: 0;
   }
+
+  /* <dd> otherwise gets a ~40px inline-start indent from the browser default
+     stylesheet (Carole's key/value sections use <dl>/<dt>/<dd>). */
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  /* Plain <button> elements used as clickable text (not PrimeNG's p-button)
+     otherwise render with native OS button chrome — background, border,
+     padding, and a non-inherited font — since preflight is off. A blanket
+     `button` reset isn't an option: it would also strip PrimeNG's own
+     <button>-based components, which is the exact conflict preflight being
+     off is meant to avoid. Opt in per-button with this class instead. */
+  button.text-button {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
 }

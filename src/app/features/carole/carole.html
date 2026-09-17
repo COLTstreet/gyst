@@ -16,13 +16,21 @@
                   [ngModel]="item.checked"
                   (ngModelChange)="toggleChecklistItem(section.id, item.id, $event)"
                 />
-                <span
-                  class="text-sm"
+                <button
+                  type="button"
+                  class="text-button flex-1"
                   [style.text-decoration]="item.checked ? 'line-through' : 'none'"
                   [style.color]="item.checked ? 'var(--p-card-subtitle-color)' : 'var(--p-card-color)'"
+                  (click)="openEditItem(section, item)"
                 >
                   {{ item.text }}
-                </span>
+                </button>
+                @if (item.url) {
+                  <a [href]="item.url" target="_blank" rel="noopener noreferrer" aria-label="Open link" style="color: var(--p-primary-color)">
+                    <i class="pi pi-external-link"></i>
+                  </a>
+                }
+                <p-button icon="pi pi-trash" [text]="true" severity="secondary" ariaLabel="Delete item" (onClick)="removeItem(section.id, item.id)" />
               </li>
             }
           </ul>
@@ -30,9 +38,13 @@
         @case ('keyValue') {
           <dl class="flex flex-col gap-1 text-sm">
             @for (item of asKeyValue(section.items); track item.id) {
-              <div class="flex justify-between gap-4">
+              <div
+                class="flex cursor-pointer items-center justify-between gap-4"
+                (click)="openEditItem(section, item)"
+              >
                 <dt style="color: var(--p-card-subtitle-color)">{{ item.key }}</dt>
-                <dd class="text-right">{{ item.value }}</dd>
+                <dd class="flex-1 text-right">{{ item.value }}</dd>
+                <p-button icon="pi pi-trash" [text]="true" severity="secondary" ariaLabel="Delete item" (onClick)="$event.stopPropagation(); removeItem(section.id, item.id)" />
               </div>
             }
           </dl>
@@ -40,7 +52,10 @@
         @default {
           <ul class="flex flex-col gap-2 text-sm">
             @for (item of asNotes(section.items); track item.id) {
-              <li>{{ item.text }}</li>
+              <li class="flex items-center gap-2">
+                <button type="button" class="text-button flex-1" (click)="openEditItem(section, item)">{{ item.text }}</button>
+                <p-button icon="pi pi-trash" [text]="true" severity="secondary" ariaLabel="Delete item" (onClick)="removeItem(section.id, item.id)" />
+              </li>
             }
           </ul>
         }
@@ -85,5 +100,28 @@
       (ngModelChange)="newSectionType.set($event)"
     />
     <p-button label="Create" [disabled]="!newSectionTitle().trim()" (onClick)="createSection()" />
+  </div>
+</p-dialog>
+
+<p-dialog header="Edit item" [(visible)]="showEditDialog" [modal]="true" [style]="{ width: '20rem' }">
+  <div class="flex flex-col gap-3">
+    @if (editingType() === 'keyValue') {
+      <input pInputText placeholder="Key" [ngModel]="editKey()" (ngModelChange)="editKey.set($event)" />
+      <input pInputText placeholder="Value" [ngModel]="editValue()" (ngModelChange)="editValue.set($event)" />
+    } @else {
+      <input pInputText placeholder="Text" [ngModel]="editText()" (ngModelChange)="editText.set($event)" />
+      @if (editingType() === 'checklist') {
+        <input
+          pInputText
+          placeholder="Link (optional)"
+          [ngModel]="editUrl()"
+          (ngModelChange)="editUrl.set($event)"
+        />
+      }
+    }
+    <div class="flex gap-2">
+      <p-button label="Save" styleClass="flex-1" [disabled]="!canSaveEdit()" (onClick)="saveEditItem()" />
+      <p-button label="Delete" severity="danger" [outlined]="true" (onClick)="deleteEditItem()" />
+    </div>
   </div>
 </p-dialog>

@@ -1,7 +1,6 @@
 import { FieldValue } from 'firebase-admin/firestore';
 import { randomUUID } from 'node:crypto';
 import { db } from '../shared/firestore';
-import { createCalendarEvent } from '../calendar/createEvent';
 
 type ToolHandler = (userId: string, input: Record<string, unknown>) => Promise<unknown>;
 
@@ -105,15 +104,6 @@ const handlers: Record<string, ToolHandler> = {
   async cancel_reminder(_userId, input) {
     await db.collection('reminders').doc(input['reminderId'] as string).delete();
     return { cancelled: true };
-  },
-
-  async create_calendar_event(userId, input) {
-    return createCalendarEvent(userId, {
-      summary: input['summary'] as string,
-      description: input['description'] as string | undefined,
-      startDateTime: input['startDateTime'] as string,
-      endDateTime: input['endDateTime'] as string,
-    });
   },
 
   async add_gift_idea(userId, input) {
