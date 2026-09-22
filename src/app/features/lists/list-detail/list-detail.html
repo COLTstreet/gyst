@@ -18,7 +18,7 @@
     </form>
 
     <ul class="flex flex-col gap-2">
-      @for (item of list.items; track item.id) {
+      @for (item of sortedItems(); track item.id) {
         <li>
           <p-card>
             <div class="flex items-center gap-3">

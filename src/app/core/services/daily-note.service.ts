@@ -1,13 +1,18 @@
 import { Injectable, effect, signal } from '@angular/core';
 import {
   arrayUnion,
+  collection,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
+  orderBy,
+  query,
   serverTimestamp,
   setDoc,
   Timestamp,
   updateDoc,
+  where,
   type Unsubscribe,
 } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -85,5 +90,23 @@ export class DailyNoteService {
 
     const entries = note.entries.filter((entry) => entry.id !== entryId);
     await updateDoc(doc(db, 'dailyNotes', note.id), { entries, updatedAt: serverTimestamp() });
+  }
+
+  /**
+   * One-shot fetch of every day's notes, for Search — not a live listener
+   * like currentNote, since search doesn't need real-time updates and this
+   * could span years of history.
+   */
+  async getAllNotes(): Promise<DailyNote[]> {
+    const user = this.authService.user();
+    if (!user) return [];
+
+    const notesQuery = query(
+      collection(db, 'dailyNotes'),
+      where('userId', '==', user.uid),
+      orderBy('date', 'desc'),
+    );
+    const snap = await getDocs(notesQuery);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }) as DailyNote);
   }
 }

@@ -1,0 +1,71 @@
+<div class="mx-auto flex max-w-lg flex-col gap-4 p-4">
+  <h1 class="text-lg font-semibold">Search</h1>
+
+  <p-iconfield>
+    <p-inputicon class="pi pi-search" />
+    <input
+      pInputText
+      class="w-full"
+      placeholder="Search tasks, lists, and notes…"
+      [ngModel]="term()"
+      (ngModelChange)="term.set($event)"
+      autofocus
+    />
+  </p-iconfield>
+
+  @if (!term().trim()) {
+    <p class="py-8 text-center text-sm" style="color: var(--p-text-muted-color)">
+      Start typing to search across tasks, lists, and daily notes.
+    </p>
+  } @else {
+    @if (!notesLoaded()) {
+      <p class="text-xs" style="color: var(--p-text-muted-color)">Loading notes…</p>
+    }
+
+    @if (taskResults().length) {
+      <section class="flex flex-col gap-2">
+        <h2 class="text-xs font-medium uppercase" style="color: var(--p-text-muted-color)">Tasks</h2>
+        @for (task of taskResults(); track task.id) {
+          <p-card styleClass="cursor-pointer" (click)="openTask(task)">
+            <p class="text-sm">{{ task.title }}</p>
+            @if (task.notes) {
+              <p class="mt-1 text-xs" style="color: var(--p-card-subtitle-color)">{{ task.notes }}</p>
+            }
+          </p-card>
+        }
+      </section>
+    }
+
+    @if (listResults().length) {
+      <section class="flex flex-col gap-2">
+        <h2 class="text-xs font-medium uppercase" style="color: var(--p-text-muted-color)">Lists</h2>
+        @for (result of listResults(); track result.item.id) {
+          <p-card styleClass="cursor-pointer" (click)="openList(result.list)">
+            <p class="text-sm">{{ result.item.text }}</p>
+            <p class="mt-1 text-xs" style="color: var(--p-card-subtitle-color)">in {{ result.list.name }}</p>
+          </p-card>
+        }
+      </section>
+    }
+
+    @if (noteResults().length) {
+      <section class="flex flex-col gap-2">
+        <h2 class="text-xs font-medium uppercase" style="color: var(--p-text-muted-color)">Daily Notes</h2>
+        @for (result of noteResults(); track result.entry.id) {
+          <p-card styleClass="cursor-pointer" (click)="openNote(result.note)">
+            <p class="text-sm">{{ result.entry.text }}</p>
+            <p class="mt-1 text-xs" style="color: var(--p-card-subtitle-color)">
+              {{ result.note.date | date: 'MMM d, y' }}
+            </p>
+          </p-card>
+        }
+      </section>
+    }
+
+    @if (!hasAnyResults() && notesLoaded()) {
+      <p class="py-8 text-center text-sm" style="color: var(--p-text-muted-color)">
+        No results for "{{ term() }}".
+      </p>
+    }
+  }
+</div>

@@ -24,6 +24,12 @@ export class ListDetail {
   protected readonly list = computed(() => this.listService.lists().find((l) => l.id === this.listId));
   protected readonly newItemText = signal('');
 
+  /** Checked items sink to the bottom; order is otherwise preserved within each group. */
+  protected readonly sortedItems = computed(() => {
+    const items = this.list()?.items ?? [];
+    return [...items].sort((a, b) => Number(a.checked) - Number(b.checked) || a.order - b.order);
+  });
+
   protected async addItem(): Promise<void> {
     const text = this.newItemText().trim();
     if (!text) return;
